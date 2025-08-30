@@ -1,0 +1,5 @@
+{
+  "name": "수업 진도 알리미",
+  "description": "A web application that links a weekly teacher's timetable with a course progress chart. Users can manage their schedule with drag-and-drop functionality and update course progress, with changes reflected in real-time on the timetable.",
+  "requestFramePermissions": []
+}
