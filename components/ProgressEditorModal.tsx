@@ -1,14 +1,14 @@
 
 import React, { useState, useEffect } from 'react';
 import Modal from './Modal';
-import { ScheduleItem } from '../types';
+import { ScheduleItem, ProgressEntry } from '../types';
 
 interface ProgressEditorModalProps {
   isOpen: boolean;
   onClose: () => void;
   itemInfo: { item: ScheduleItem, session: number } | null;
-  currentProgress: string;
-  onSave: (key: string, value: string) => void;
+  currentProgress: ProgressEntry;
+  onSave: (key: string, value: ProgressEntry) => void;
   currentWeek: number;
 }
 
@@ -20,11 +20,13 @@ const ProgressEditorModal: React.FC<ProgressEditorModalProps> = ({
   onSave,
   currentWeek,
 }) => {
-  const [text, setText] = useState('');
+  const [content, setContent] = useState('');
+  const [memo, setMemo] = useState('');
 
   useEffect(() => {
     if (isOpen) {
-      setText(currentProgress);
+      setContent(currentProgress.content);
+      setMemo(currentProgress.memo);
     }
   }, [isOpen, currentProgress]);
 
@@ -32,7 +34,7 @@ const ProgressEditorModal: React.FC<ProgressEditorModalProps> = ({
     if (!itemInfo) return;
     const { item, session } = itemInfo;
     const progressKey = `w${currentWeek}-c${item.classId}-s${session}`;
-    onSave(progressKey, text);
+    onSave(progressKey, { content, memo });
   };
   
   const handleSubmit = (e: React.FormEvent) => {
@@ -56,11 +58,21 @@ const ProgressEditorModal: React.FC<ProgressEditorModalProps> = ({
                 <label className="block text-sm font-medium text-gray-700">진도 내용</label>
                 <input
                     type="text"
-                    value={text}
-                    onChange={(e) => setText(e.target.value)}
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                    placeholder="오늘 수업한 내용을 입력하세요."
+                    placeholder="수업할 내용을 입력하세요."
                     autoFocus
+                />
+            </div>
+             <div>
+                <label className="block text-sm font-medium text-gray-700">메모</label>
+                <textarea
+                    value={memo}
+                    onChange={(e) => setMemo(e.target.value)}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                    placeholder="메모를 입력하세요."
+                    rows={3}
                 />
             </div>
             <div className="flex justify-end space-x-2 pt-2">

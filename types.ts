@@ -7,8 +7,13 @@ export interface ScheduleItem {
   classId: string; // The free-form class name, e.g., "3-1" or "관광경영과"
 }
 
+export interface ProgressEntry {
+  content: string;
+  memo: string;
+}
+
 export interface ProgressData {
-  [key: string]: string; // Key: 'w{week}-c{classId}-s{session}' -> e.g., 'w1-c3-1-s1'
+  [key: string]: ProgressEntry;
 }
 
 export interface Week {
