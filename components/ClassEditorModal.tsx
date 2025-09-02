@@ -74,7 +74,7 @@ const ClassEditorModal: React.FC<ClassEditorModalProps> = ({ isOpen, onClose, cu
                         />
                         <button 
                             onClick={() => handleRemoveClass(index)} 
-                            className="px-3 py-2 bg-red-100 text-red-700 rounded-md text-sm font-semibold hover:bg-red-200 transition-colors"
+                            className="px-3 py-2 bg-red-100 text-red-700 rounded-md text-sm font-medium hover:bg-red-200 transition-colors"
                         >
                             삭제
                         </button>
@@ -82,14 +82,14 @@ const ClassEditorModal: React.FC<ClassEditorModalProps> = ({ isOpen, onClose, cu
                 ))}
                  <button 
                     onClick={handleAddClass} 
-                    className="w-full mt-3 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors"
+                    className="w-full mt-3 px-4 py-2 bg-green-500 text-white rounded-md text-sm font-medium hover:bg-green-600 transition-colors"
                 >
                     반 추가
                 </button>
             </div>
             <div className="flex justify-end space-x-2 mt-6 pt-4 border-t">
-                <button onClick={onClose} className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">취소</button>
-                <button onClick={handleSave} className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">저장</button>
+                <button onClick={onClose} className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 text-sm font-medium">취소</button>
+                <button onClick={handleSave} className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm font-medium">저장</button>
             </div>
         </Modal>
     );

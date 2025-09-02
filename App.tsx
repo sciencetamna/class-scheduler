@@ -107,13 +107,13 @@ const ScheduleForm: React.FC<ScheduleFormProps> = ({ item, onSave, onDelete }) =
             </div>
             <div>
                 <label className="block text-sm font-medium text-gray-700">반</label>
-                <input type="text" name="classId" value={formData.classId} onChange={handleChange} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" placeholder="예: 3-1, 관광경영과 등" required />
+                <input type="text" name="classId" value={formData.classId} onChange={handleChange} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" placeholder="예: 3-1 or 관광경영과 등" required />
             </div>
             <div className="flex justify-end space-x-2">
                 {formData.id && onDelete && (
-                     <button type="button" onClick={() => onDelete(formData.id!)} className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">삭제</button>
+                     <button type="button" onClick={() => onDelete(formData.id!)} className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm font-medium">삭제</button>
                 )}
-                <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">저장</button>
+                <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm font-medium">저장</button>
             </div>
         </form>
     );
@@ -255,18 +255,23 @@ const App: React.FC = () => {
         return allSubjects.filter(subject => !hiddenSubjects.includes(subject));
     }, [allSubjects, hiddenSubjects]);
 
+    const [selectedSubject, setSelectedSubject] = useState<string>('');
+    
     const classNumbers = useMemo(() => {
+        if (!selectedSubject) {
+            return [];
+        }
         const classSet = new Set<string>();
+        
         const base = baseSchedule || initialSchedule;
-
         base.forEach(item => {
-            if (item.classId) {
+            if (item.subject === selectedSubject && item.classId) {
                 classSet.add(item.classId);
             }
         });
-        
+
         Object.values(schedulesByWeek).flat().forEach(item => {
-            if (item.classId) {
+            if (item.subject === selectedSubject && item.classId) {
                 classSet.add(item.classId);
             }
         });
@@ -274,9 +279,8 @@ const App: React.FC = () => {
         return Array.from(classSet).sort((a, b) => 
             a.localeCompare(b, 'ko-KR', { numeric: true, sensitivity: 'base' })
         );
-    }, [baseSchedule, schedulesByWeek]);
+    }, [baseSchedule, schedulesByWeek, selectedSubject]);
 
-    const [selectedSubject, setSelectedSubject] = useState<string>('');
 
     useEffect(() => {
         if (visibleSubjects.length > 0 && !visibleSubjects.includes(selectedSubject)) {
@@ -429,12 +433,15 @@ const App: React.FC = () => {
     
             const newProgress: ProgressData = {};
             for (const key in progress) {
-                const match = key.match(/^w(\d+)-c(.+)-s(\d+)$/);
+                const match = key.match(/^w(\d+)-c(.+?)-sub(.+)-s(\d+)$/);
                 if (match) {
                     const oldWeekId = parseInt(match[1], 10);
                     const newWeekId = weekIdMap[oldWeekId];
                     if (newWeekId !== undefined) {
-                        newProgress[`w${newWeekId}-c${match[2]}-s${match[3]}`] = progress[key];
+                        const classId = match[2];
+                        const subject = match[3];
+                        const session = match[4];
+                        newProgress[`w${newWeekId}-c${classId}-sub${subject}-s${session}`] = progress[key];
                     }
                 }
             }
@@ -516,12 +523,15 @@ const App: React.FC = () => {
     
         const newProgress: ProgressData = {};
         for (const key in progress) {
-            const match = key.match(/^w(\d+)-c(.+)-s(\d+)$/);
+            const match = key.match(/^w(\d+)-c(.+?)-sub(.+)-s(\d+)$/);
             if (match) {
                 const oldWeekId = parseInt(match[1], 10);
                 const newWeekId = weekIdMap[oldWeekId];
                 if (newWeekId !== undefined) {
-                    newProgress[`w${newWeekId}-c${match[2]}-s${match[3]}`] = progress[key];
+                    const classId = match[2];
+                    const subject = match[3];
+                    const session = match[4];
+                    newProgress[`w${newWeekId}-c${classId}-sub${subject}-s${session}`] = progress[key];
                 }
             }
         }
@@ -614,7 +624,7 @@ const App: React.FC = () => {
                 const currentCount = weeklySessionCounter.get(counterKey) || 0;
                 const sessionNumber = currentCount + 1;
                 
-                const progressKey = `w${weekId}-c${item.classId}-s${sessionNumber}`;
+                const progressKey = `w${weekId}-c${item.classId}-sub${item.subject}-s${sessionNumber}`;
                 const progressEntry = progress[progressKey];
                 
                 if (progressEntry && progressEntry.content) {
@@ -778,6 +788,28 @@ const App: React.FC = () => {
         setIsEditMode(prev => !prev);
     };
 
+    const actualCurrentWeekId = useMemo(() => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const currentYear = today.getFullYear();
+        const foundWeek = weeks.find(week => {
+             try {
+                const [startStr, endStr] = week.dates.split(' ~ ');
+                const [startMonth, startDay] = startStr.split('-').map(Number);
+                const [endMonth, endDay] = endStr.split('-').map(Number);
+                const startDate = new Date(currentYear, startMonth - 1, startDay);
+                const endDate = new Date(currentYear, endMonth - 1, endDay);
+                startDate.setHours(0, 0, 0, 0);
+                endDate.setHours(0, 0, 0, 0);
+                return today >= startDate && today <= endDate;
+            } catch (e) {
+                console.error(`Error parsing dates for week ${week.id}: "${week.dates}"`);
+                return false;
+            }
+        });
+        return foundWeek ? foundWeek.id : null;
+    }, [weeks]);
+
     if (!currentUser) {
         return <Auth onAuthSuccess={handleAuthSuccess} />;
     }
@@ -794,7 +826,7 @@ const App: React.FC = () => {
                         <span className="text-slate-600">환영합니다, <span className="font-bold">{currentUser}</span>님</span>
                         <button
                             onClick={handleLogout}
-                            className="px-4 py-2 bg-slate-600 text-white rounded-md text-sm font-semibold hover:bg-slate-700 transition-colors"
+                            className="px-4 py-2 bg-slate-600 text-white rounded-md text-sm font-medium hover:bg-slate-700 transition-colors"
                         >
                             로그아웃
                         </button>
@@ -830,7 +862,7 @@ const App: React.FC = () => {
                                 <div className="flex items-center gap-2 whitespace-nowrap">
                                     <button
                                         onClick={handleToggleEditMode}
-                                        className={`px-4 py-1.5 rounded-md text-sm font-semibold transition-colors ${
+                                        className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
                                             isEditMode
                                             ? 'bg-red-500 text-white hover:bg-red-600'
                                             : 'bg-blue-600 text-white hover:bg-blue-700'
@@ -840,7 +872,7 @@ const App: React.FC = () => {
                                     </button>
                                     <button
                                         onClick={handleSetBaseSchedule}
-                                        className="px-4 py-1.5 bg-indigo-600 text-white rounded-md text-sm font-semibold hover:bg-indigo-700 transition-colors"
+                                        className="px-4 py-1.5 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700 transition-colors"
                                     >
                                         기본 시간표로 설정
                                     </button>
@@ -856,6 +888,7 @@ const App: React.FC = () => {
                                     highlightedProgressContent={highlightedProgressContent}
                                     isEditMode={isEditMode}
                                     sessionMap={sessionMap}
+                                    isCurrentWeek={currentWeek === actualCurrentWeekId}
                                 />
                             </div>
                         </div>
@@ -891,7 +924,7 @@ const App: React.FC = () => {
                         isOpen={isProgressModalOpen}
                         onClose={() => setIsProgressModalOpen(false)}
                         itemInfo={editingProgressItem}
-                        currentProgress={progress[`w${currentWeek}-c${editingProgressItem.item.classId}-s${editingProgressItem.session}`] || { content: '', memo: '' }}
+                        currentProgress={progress[`w${currentWeek}-c${editingProgressItem.item.classId}-sub${editingProgressItem.item.subject}-s${editingProgressItem.session}`] || { content: '', memo: '' }}
                         onSave={handleSaveProgress}
                         currentWeek={currentWeek}
                     />

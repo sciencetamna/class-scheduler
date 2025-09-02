@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { ScheduleItem, ProgressData } from '../types';
 import { DAYS, PERIODS } from '../constants';
@@ -11,6 +12,7 @@ interface TimetableProps {
   highlightedProgressContent: string | null;
   isEditMode: boolean;
   sessionMap: Map<string, number>;
+  isCurrentWeek: boolean;
 }
 
 const Timetable: React.FC<TimetableProps> = ({ 
@@ -21,7 +23,8 @@ const Timetable: React.FC<TimetableProps> = ({
   onCellClick, 
   highlightedProgressContent,
   isEditMode,
-  sessionMap
+  sessionMap,
+  isCurrentWeek
 }) => {
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [dragOverCellKey, setDragOverCellKey] = useState<string | null>(null);
@@ -82,7 +85,7 @@ const Timetable: React.FC<TimetableProps> = ({
     >
       <div className="py-1.5 pr-1 font-bold text-slate-600">교시</div>
       {DAYS.map((day, index) => {
-          const isToday = today === index + 1;
+          const isToday = isCurrentWeek && today === index + 1;
           return (
                <div 
                   key={day} 
@@ -105,12 +108,12 @@ const Timetable: React.FC<TimetableProps> = ({
           </div>
           {DAYS.map((_, dayIndex) => {
             const day = dayIndex + 1;
-            const isTodayColumn = today === day;
+            const isTodayColumn = isCurrentWeek && today === day;
             const item = scheduleMap.get(`${day}-${period.id}`);
             
             if (item) {
               const sessionNumber = sessionMap.get(item.id);
-              const progressKey = sessionNumber ? `w${currentWeek}-c${item.classId}-s${sessionNumber}` : '';
+              const progressKey = sessionNumber ? `w${currentWeek}-c${item.classId}-sub${item.subject}-s${sessionNumber}` : '';
               const progressEntry = progress[progressKey] || { content: '', memo: '' };
               const { content: progressContent, memo } = progressEntry;
               const hasMemo = memo && memo.trim() !== '';
@@ -137,7 +140,7 @@ const Timetable: React.FC<TimetableProps> = ({
                   onClick={() => onCellClick(item)}
                 >
                   <div>
-                    <div className="font-bold text-slate-800">{item.classId} {item.subject}</div>
+                    <div className="font-jua text-slate-800 text-base tracking-tight">{item.classId} {item.subject}</div>
                   </div>
                   {progressContent && (
                     <div className="text-xs mt-1 p-1 bg-green-100 text-green-800 rounded break-all">

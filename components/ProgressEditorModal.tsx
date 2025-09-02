@@ -33,7 +33,7 @@ const ProgressEditorModal: React.FC<ProgressEditorModalProps> = ({
   const handleSave = () => {
     if (!itemInfo) return;
     const { item, session } = itemInfo;
-    const progressKey = `w${currentWeek}-c${item.classId}-s${session}`;
+    const progressKey = `w${currentWeek}-c${item.classId}-sub${item.subject}-s${session}`;
     onSave(progressKey, { content, memo });
   };
   
@@ -76,8 +76,8 @@ const ProgressEditorModal: React.FC<ProgressEditorModalProps> = ({
                 />
             </div>
             <div className="flex justify-end space-x-2 pt-2">
-                <button type="button" onClick={onClose} className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">취소</button>
-                <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">저장</button>
+                <button type="button" onClick={onClose} className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 text-sm font-medium">취소</button>
+                <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm font-medium">저장</button>
             </div>
         </form>
     </Modal>

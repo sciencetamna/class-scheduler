@@ -61,10 +61,10 @@ const SubjectVisibilityModal: React.FC<SubjectVisibilityModalProps> = ({
         </div>
       </div>
       <div className="flex justify-end space-x-2 mt-6 pt-4 border-t">
-        <button onClick={onClose} className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">
+        <button onClick={onClose} className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 text-sm font-medium">
           취소
         </button>
-        <button onClick={handleSave} className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+        <button onClick={handleSave} className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm font-medium">
           저장
         </button>
       </div>

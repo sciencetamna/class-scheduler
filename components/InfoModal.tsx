@@ -19,7 +19,7 @@ const InfoModal: React.FC<InfoModalProps> = ({ isOpen, onClose, title, message }
             <div className="flex justify-end pt-2">
                 <button 
                     onClick={onClose} 
-                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm font-medium"
                 >
                     확인
                 </button>

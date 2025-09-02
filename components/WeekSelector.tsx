@@ -12,7 +12,7 @@ interface WeekSelectorProps {
 const WeekSelector: React.FC<WeekSelectorProps> = ({ weeks, currentWeek, onSelectWeek, onAddWeek, onRemoveWeek }) => {
   return (
     <div className="bg-white rounded-lg shadow-md p-2">
-      <div className="max-h-48 overflow-y-auto">
+      <div className="max-h-52 overflow-y-auto">
         <table className="w-full text-center text-xs border-collapse table-fixed">
           <thead>
             <tr className="bg-slate-200">
@@ -37,13 +37,13 @@ const WeekSelector: React.FC<WeekSelectorProps> = ({ weeks, currentWeek, onSelec
       <div className="mt-2 flex gap-2">
         <button 
             onClick={onAddWeek} 
-            className="w-full px-3 py-1.5 bg-blue-500 text-white rounded-md text-sm font-semibold hover:bg-blue-600 transition-colors"
+            className="w-full px-3 py-1.5 bg-blue-500 text-white rounded-md text-sm font-medium hover:bg-blue-600 transition-colors"
         >
             주차 추가
         </button>
         <button 
             onClick={onRemoveWeek}
-            className="w-full px-3 py-1.5 bg-red-500 text-white rounded-md text-sm font-semibold hover:bg-red-600 transition-colors"
+            className="w-full px-3 py-1.5 bg-red-500 text-white rounded-md text-sm font-medium hover:bg-red-600 transition-colors"
         >
             주차 제거
         </button>

@@ -177,7 +177,7 @@ const ProgressSummary: React.FC<ProgressSummaryProps> = ({
 
   return (
     <div className="bg-white rounded-lg shadow-md mt-8">
-      <div className="px-3 pt-2.5 border-b border-slate-300">
+      <div className="px-3 pt-3 border-b border-slate-300">
         <div
           ref={tabContainerRef}
           className="-mb-px flex gap-1 overflow-x-auto"
@@ -195,7 +195,7 @@ const ProgressSummary: React.FC<ProgressSummaryProps> = ({
                     key={subject}
                     data-subject={subject}
                     onClick={() => handleTabClick(subject)}
-                    className={`relative flex-shrink-0 whitespace-nowrap px-3 py-1 text-sm font-semibold rounded-t-lg border border-slate-300 transition-colors focus:outline-none ${
+                    className={`relative flex-shrink-0 whitespace-nowrap px-3 py-1 text-sm font-medium rounded-t-lg border border-slate-300 transition-colors focus:outline-none ${
                         selectedSubject === subject
                         ? 'bg-white text-blue-600 border-b-white -mb-px'
                         : 'bg-slate-50 text-slate-600 hover:bg-slate-200 border-b-slate-300'
@@ -208,7 +208,7 @@ const ProgressSummary: React.FC<ProgressSummaryProps> = ({
       </div>
 
       <div className="p-4">
-        <div className="max-h-52 overflow-y-auto overflow-x-hidden">
+        <div className="max-h-72 overflow-y-auto overflow-x-hidden">
             {progressContent.length === 0 ? (
             <p className="text-center text-sm text-slate-500 py-4">선택된 과목에 대한 진도 내용이 없습니다.</p>
             ) : (

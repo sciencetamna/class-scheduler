@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { ProgressData, Week } from '../types';
 
@@ -194,7 +195,7 @@ const ProgressChart: React.FC<ProgressChartProps> = ({
         </div>
         <button 
             onClick={onEditSubjects}
-            className="px-3 py-1.5 bg-blue-600 text-white rounded-md text-sm font-semibold hover:bg-blue-700 transition-colors"
+            className="px-3 py-1.5 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"
         >
             과목 편집
         </button>
@@ -218,7 +219,7 @@ const ProgressChart: React.FC<ProgressChartProps> = ({
                     key={subject}
                     data-subject={subject}
                     onClick={() => handleTabClick(subject)}
-                    className={`flex-shrink-0 whitespace-nowrap px-4 py-1.5 text-sm font-semibold rounded-t-lg border border-slate-300 transition-colors focus:outline-none relative ${
+                    className={`flex-shrink-0 whitespace-nowrap px-4 py-1.5 text-sm font-medium rounded-t-lg border border-slate-300 transition-colors focus:outline-none relative ${
                         selectedSubject === subject
                         ? 'bg-white text-blue-600 border-b-white'
                         : 'bg-slate-50 text-slate-600 hover:bg-slate-200 border-b-slate-300'
@@ -234,7 +235,7 @@ const ProgressChart: React.FC<ProgressChartProps> = ({
         <div className="overflow-x-auto">
             <table className="min-w-full border-collapse text-center text-sm table-fixed">
             <thead>
-                <tr className="bg-slate-200">
+                <tr className="bg-slate-200 text-[13px]">
                 <th rowSpan={2} className="p-2 border border-slate-300 w-16 min-w-[4rem] sticky left-0 z-10 bg-slate-200">반</th>
                 {weeks.map(week => {
                     const maxSessionsForWeek = weeklyMaxSessions[week.id] || 0;
@@ -245,7 +246,7 @@ const ProgressChart: React.FC<ProgressChartProps> = ({
                     )
                 })}
                 </tr>
-                <tr className="bg-slate-200">
+                <tr className="bg-slate-200 text-[13px]">
                 {weeks.flatMap(week => {
                     const maxSessionsForWeek = weeklyMaxSessions[week.id] || 0;
                     if (maxSessionsForWeek === 0) {
@@ -273,7 +274,7 @@ const ProgressChart: React.FC<ProgressChartProps> = ({
                             if (session > classSessionsForSubject) {
                                 return <td key={`w${week.id}-c${classId}-s${session}`} className="p-0 border border-slate-300 bg-slate-100"></td>
                             }
-                            const key = `w${week.id}-c${classId}-s${session}`;
+                            const key = `w${week.id}-c${classId}-sub${selectedSubject}-s${session}`;
                             const value = progress[key]?.content || '';
                             return (
                                 <td key={key} className="p-0 border border-slate-300 align-middle">
@@ -286,9 +287,14 @@ const ProgressChart: React.FC<ProgressChartProps> = ({
                 ))}
             </tbody>
             </table>
-            {subjects.length > 0 && allWeeksHaveZeroSessions && selectedSubject && (
+            {subjects.length > 0 && classNumbers.length > 0 && allWeeksHaveZeroSessions && selectedSubject && (
                 <div className="text-center text-slate-500 p-4 border border-t-0 border-slate-300">
                     '{selectedSubject}' 과목은 시간표에 없거나, 해당 과목의 수업이 배정된 반이 없습니다.
+                </div>
+            )}
+            {subjects.length > 0 && classNumbers.length === 0 && selectedSubject && (
+                 <div className="text-center text-slate-500 p-4 border border-t-0 border-slate-300">
+                    '{selectedSubject}' 과목이 배정된 반이 없습니다.
                 </div>
             )}
             {subjects.length === 0 && (
